@@ -118,6 +118,7 @@ def accuracy_score(y_true, y_pred):
 # # y_test = [x[-1] for x in tes#t]
 
 from extract_fetures import Tfidf_method, split_data, BOW_method, MY_method
+
 tfidf = Tfidf_method()
 X, y, data = tfidf.preprocess_data()
 X, y = tfidf.extract_top_k_features(X, y, 1500, data)
