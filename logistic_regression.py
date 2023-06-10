@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from minist.extract_features import MNISTFeatures
 
 
-
 class LogisticRegression:
     def __init__(self, reg_lambda=0, iterations=100, alpha=0.1, num_classes=10):
         self.reg_lambda = reg_lambda
@@ -77,7 +76,7 @@ class LogisticRegression:
 
     def predict_labels(self, X, W, b, Y):
         z = [[sum([X[i][k] * W[k][j] for k in range(len(X[0]))]) + b[j] for j in range(len(b))] for i in range(len(X))]
-        return [W.index(max(row)) for row in z]
+        return [row.index(max(row)) for row in z]
     
     def calculate_accuracy(self, p, y):
         correct = 0
@@ -86,57 +85,3 @@ class LogisticRegression:
                 correct += 1
         return correct / len(p)
     
-def run():
-    features = MNISTFeatures()
-    X_train, Y_train, X_test, Y_test  = features.load_mnist_data()
-    
-    pixel_X_train = [features.pixel_intensity_feature(row) for row in X_train]
-    pixel_X_test = [features.pixel_intensity_feature(row) for row in X_test]
-    
-    hog_X_train = [features.hog_feature(row) for row in X_train]
-    hog_X_test = [features.hog_feature(row) for row in X_test]
-    
-    pca_X_train = features.pca_feature(X_train)
-    pca_X_test = features.pca_feature(X_test)
-
-    learning_rates = [0.0001, 0.001, 0.01, 0.1, 1.0, 1.5]
-    
-    # Pixel features
-    pixel_accuracies = []
-    for learning_rate in learning_rates:
-        log_reg = LogisticRegression(reg_lambda=0.01, iterations=1500, alpha=learning_rate, num_classes=10)
-        log_reg.fit(pixel_X_train, Y_train)
-        accuracy = log_reg.predict(pixel_X_test, Y_test)
-        pixel_accuracies.append(accuracy)
-    
-    # HOG features 
-    hog_accuracies = []
-    for learning_rate in learning_rates:
-        log_reg = LogisticRegression(reg_lambda=0.01, iterations=1500, alpha=learning_rate, num_classes=10)
-        log_reg.fit(hog_X_train, Y_train)
-        accuracy = log_reg.predict(hog_X_test, Y_test)
-        hog_accuracies.append(accuracy)
-        
-    # PCA features
-    pca_accuracies = []
-    for learning_rate in learning_rates:
-        log_reg = LogisticRegression(reg_lambda=0.01, iterations=1500, alpha=learning_rate, num_classes=10)
-        log_reg.fit(pca_X_train, Y_train)
-        accuracy = log_reg.predict(pca_X_test, Y_test)
-        pca_accuracies.append(accuracy)
-
-    plt.subplot(1, 3, 1)
-    plt.plot(learning_rates, pixel_accuracies)
-    plt.title('Pixel Accuracy vs. Learning Rate')
-    
-    plt.subplot(1, 3, 2)
-    plt.plot(learning_rates, hog_accuracies)
-    plt.title('HOG Accuracy vs. Learning Rate')
-    
-    plt.subplot(1, 3, 3) 
-    plt.plot(learning_rates, pca_accuracies)
-    plt.title('PCA Accuracy vs. Learning Rate')
-    
-    plt.show()
-
-run()

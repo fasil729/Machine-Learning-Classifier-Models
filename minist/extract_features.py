@@ -5,10 +5,10 @@ import numpy as np
 
 class MNISTFeatures:
     def load_mnist_data(self):
-        mndata = MNIST('mnist_data')
+        mndata = MNIST('minist/mnist_data')
         X_train, y_train = mndata.load_training()
         X_test, y_test = mndata.load_testing()
-        return X_train[:600], y_train[:600], X_test[:200], y_test[:200]
+        return X_train[:6000], y_train[:6000], X_test[:2000], y_test[:2000]
     
     def pixel_intensity_feature(self, image):
         return [x/255.0 for x in image]
@@ -21,4 +21,12 @@ class MNISTFeatures:
     def pca_feature(self, images, n_components=100):
         pca = PCA(n_components)
         pca.fit(images)
-        return pca  
+        return pca 
+    
+    
+    
+    def extract_features(self, image, pca):
+       
+        pca_feat = pca.transform([image]).flatten()
+        
+        return pca_feat
